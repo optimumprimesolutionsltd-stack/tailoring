@@ -20,13 +20,14 @@ import {
 } from 'lucide-react';
 import { FAQCategory, FAQItem } from '../types';
 import { FAQ_DATA, NAIROBI_NEIGHBORHOODS, CARE_RULES } from '../data/faqData';
-import { BRAND_INFO } from '../data/tailoringData';
+import { useTailoring } from '../context/TailoringContext';
 
 interface FAQSectionProps {
   onOpenBooking: (serviceId?: string) => void;
 }
 
 export const FAQSection: React.FC<FAQSectionProps> = ({ onOpenBooking }) => {
+  const { brand } = useTailoring();
   const [activeCategory, setActiveCategory] = useState<FAQCategory>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>('faq-fabric-sourcing-origins');
@@ -65,7 +66,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onOpenBooking }) => {
       const elem = document.querySelector('#contact');
       if (elem) elem.scrollIntoView({ behavior: 'smooth' });
     } else if (action.actionType === 'whatsapp') {
-      window.open(`https://wa.me/${BRAND_INFO.whatsapp}?text=Hello%20Nyota%20Swerve%2C%20I%20have%20an%20inquiry%20regarding%20bespoke%20services.`, '_blank');
+      window.open(`https://wa.me/${brand.whatsapp}?text=Hello%20Nyota%20Swerve%2C%20I%20have%20an%20inquiry%20regarding%20bespoke%20services.`, '_blank');
     }
   };
 
@@ -667,15 +668,15 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onOpenBooking }) => {
 
           <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
             <a
-              href={`tel:${BRAND_INFO.phone}`}
+              href={`tel:${brand.phone}`}
               className="px-4 py-2.5 bg-[#EDE7DC] border border-[#D6CBB8] hover:border-[#6E5410] text-xs font-semibold text-[#2B2723] rounded-sm flex items-center gap-2 transition-all"
             >
               <PhoneCall className="w-3.5 h-3.5 text-[#6E5410]" />
-              <span>{BRAND_INFO.phone}</span>
+              <span>{brand.phone}</span>
             </a>
 
             <a
-              href={`https://wa.me/${BRAND_INFO.whatsapp}?text=Hello%20Nyota%20Swerve%2C%20I%20have%20a%20question%20regarding%20fabric%20sourcing%2C%20care%2C%20or%20Nairobi%20fitting%20locations.`}
+              href={`https://wa.me/${brand.whatsapp}?text=Hello%20Nyota%20Swerve%2C%20I%20have%20a%20question%20regarding%20fabric%20sourcing%2C%20care%2C%20or%20Nairobi%20fitting%20locations.`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-xs font-semibold text-[#171412] rounded-sm flex items-center gap-2 transition-all shadow-md"

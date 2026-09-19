@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BRAND_INFO } from '../data/tailoringData';
+import { useTailoring } from '../context/TailoringContext';
 import { buildMailtoUrl, buildWhatsAppUrl, compose, openWhatsApp } from '../utils/enquiry';
 import {
   MapPin,
@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 
 export const ContactSection: React.FC = () => {
+  const { brand } = useTailoring();
   const [formSent, setFormSent] = useState(false);
   const [popupBlocked, setPopupBlocked] = useState(false);
   const [senderName, setSenderName] = useState('');
@@ -22,7 +23,7 @@ export const ContactSection: React.FC = () => {
 
   const enquiryText = () =>
     compose([
-      `Hello ${BRAND_INFO.name} — a direct enquiry from your website:`,
+      `Hello ${brand.name} — a direct enquiry from your website:`,
       '',
       `• Name: ${senderName}`,
       `• Phone / WhatsApp: ${senderPhone}`,
@@ -72,11 +73,11 @@ export const ContactSection: React.FC = () => {
                     Physical Boutique Location
                   </h3>
                   <p className="text-xs sm:text-sm text-[#524C43] leading-relaxed font-light">
-                    {BRAND_INFO.location}
+                    {brand.location}
                   </p>
                   <div className="flex items-center gap-3 mt-2.5">
                     <a
-                      href={BRAND_INFO.mapsUrl}
+                      href={brand.mapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs text-[#6E5410] hover:underline font-semibold inline-flex items-center gap-1.5"
@@ -109,15 +110,15 @@ export const ContactSection: React.FC = () => {
 
                   <div>
                     <span className="text-[12px] text-[#524C43] uppercase block">Contact / Telephone:</span>
-                    <a href={`tel:${BRAND_INFO.phone}`} className="text-base text-[#171412] hover:text-[#6E5410] font-semibold transition-colors">
-                      {BRAND_INFO.phone}
+                    <a href={`tel:${brand.phone}`} className="text-base text-[#171412] hover:text-[#6E5410] font-semibold transition-colors">
+                      {brand.phone}
                     </a>
                   </div>
 
                   <div>
                     <span className="text-[12px] text-[#524C43] uppercase block">WhatsApp:</span>
                     <a 
-                      href={`https://wa.me/${BRAND_INFO.whatsapp}?text=${encodeURIComponent("Hello Nyota. Swerve. Closet, I would like to inquire about bespoke tailoring.")}`}
+                      href={`https://wa.me/${brand.whatsapp}?text=${encodeURIComponent("Hello Nyota. Swerve. Closet, I would like to inquire about bespoke tailoring.")}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-[#6E5410] hover:underline font-medium transition-colors"
@@ -128,8 +129,8 @@ export const ContactSection: React.FC = () => {
 
                   <div>
                     <span className="text-[12px] text-[#524C43] uppercase block">E-mail:</span>
-                    <a href={`mailto:${BRAND_INFO.email}`} className="text-sm text-[#171412] hover:text-[#6E5410] font-medium transition-colors">
-                      {BRAND_INFO.email}
+                    <a href={`mailto:${brand.email}`} className="text-sm text-[#171412] hover:text-[#6E5410] font-medium transition-colors">
+                      {brand.email}
                     </a>
                   </div>
                 </div>
@@ -146,9 +147,9 @@ export const ContactSection: React.FC = () => {
                   <h3 className="font-display text-base font-bold text-[#171412] mb-1">
                     Boutique & Fitting Hours
                   </h3>
-                  <p className="text-xs text-[#524C43]">{BRAND_INFO.hours.weekdays}</p>
-                  <p className="text-xs text-[#524C43]">{BRAND_INFO.hours.saturday}</p>
-                  <p className="text-xs text-[#2B2723] font-medium">{BRAND_INFO.hours.sunday}</p>
+                  <p className="text-xs text-[#524C43]">{brand.hours.weekdays}</p>
+                  <p className="text-xs text-[#524C43]">{brand.hours.saturday}</p>
+                  <p className="text-xs text-[#2B2723] font-medium">{brand.hours.sunday}</p>
                 </div>
               </div>
             </div>
@@ -160,7 +161,7 @@ export const ContactSection: React.FC = () => {
               </h3>
               <div className="space-y-2.5">
                 <a
-                  href={BRAND_INFO.social.instagram}
+                  href={brand.social.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2.5 rounded-sm bg-[#EDE7DC] hover:bg-[#E4DCCE] text-[#2B2723] text-xs font-semibold flex items-center justify-between border border-[#D6CBB8] hover:border-[#6E5410] transition-all group"
@@ -173,7 +174,7 @@ export const ContactSection: React.FC = () => {
                 </a>
 
                 <a
-                  href={BRAND_INFO.social.facebook}
+                  href={brand.social.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2.5 rounded-sm bg-[#EDE7DC] hover:bg-[#E4DCCE] text-[#2B2723] text-xs font-semibold flex items-center justify-between border border-[#D6CBB8] hover:border-[#6E5410] transition-all group"
@@ -186,7 +187,7 @@ export const ContactSection: React.FC = () => {
                 </a>
 
                 <a
-                  href={BRAND_INFO.social.tiktok}
+                  href={brand.social.tiktok}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2.5 rounded-sm bg-[#EDE7DC] hover:bg-[#E4DCCE] text-[#2B2723] text-xs font-semibold flex items-center justify-between border border-[#D6CBB8] hover:border-[#6E5410] transition-all group"
@@ -229,7 +230,7 @@ export const ContactSection: React.FC = () => {
 
               {/* Get Directions Link */}
               <a
-                href={BRAND_INFO.mapsUrl}
+                href={brand.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="absolute bottom-4 right-4 px-3.5 py-2 rounded-sm bg-[#D4AF37] hover:bg-[#E2E8F0] text-[#171412] font-bold text-[12px] uppercase tracking-wider flex items-center gap-1.5 shadow-md transition-colors"

@@ -9,7 +9,7 @@
  * the atelier has received a message before the client has actually sent it.
  */
 
-import { BRAND_INFO } from '../data/tailoringData';
+import { getLiveBrand } from '../data/liveBrand';
 
 /**
  * Drops omitted optional fields (written as `cond && 'line'`) while keeping
@@ -19,10 +19,10 @@ const compose = (lines: (string | false | null | undefined)[]): string =>
   lines.filter((line): line is string => typeof line === 'string').join('\n');
 
 export const buildWhatsAppUrl = (message: string): string =>
-  `https://wa.me/${BRAND_INFO.whatsapp}?text=${encodeURIComponent(message)}`;
+  `https://wa.me/${getLiveBrand().whatsapp}?text=${encodeURIComponent(message)}`;
 
 export const buildMailtoUrl = (subject: string, body: string): string =>
-  `mailto:${BRAND_INFO.email}?subject=${encodeURIComponent(
+  `mailto:${getLiveBrand().email}?subject=${encodeURIComponent(
     subject,
   )}&body=${encodeURIComponent(body)}`;
 

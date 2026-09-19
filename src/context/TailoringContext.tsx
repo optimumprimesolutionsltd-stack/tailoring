@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ServiceItem, GalleryItem, BookingSubmission } from '../types';
-import { SERVICES_DATA, GALLERY_ITEMS } from '../data/tailoringData';
+import { ServiceItem, GalleryItem, BookingSubmission, PortfolioPiece, Testimonial } from '../types';
+import { SERVICES_DATA, GALLERY_ITEMS, BRAND_INFO, CLIENT_PORTFOLIO, TESTIMONIALS } from '../data/tailoringData';
+import { setLiveBrand } from '../data/liveBrand';
+
+/** Everything in BRAND_INFO is editable, so the shape follows it exactly. */
+export type BrandInfo = typeof BRAND_INFO;
 
 interface PricingRules {
   expressRushPercent: number;
@@ -14,6 +18,9 @@ interface TailoringContextType {
   gallery: GalleryItem[];
   bookings: BookingSubmission[];
   pricingRules: PricingRules;
+  brand: BrandInfo;
+  portfolio: PortfolioPiece[];
+  testimonials: Testimonial[];
   updateServicePrice: (serviceId: string, priceKES: number, priceUSD: number) => void;
   updateServiceImage: (serviceId: string, newImageUrl: string) => void;
   updateServiceDetails: (serviceId: string, updates: Partial<ServiceItem>) => void;
@@ -25,6 +32,22 @@ interface TailoringContextType {
   addBooking: (bookingData: Omit<BookingSubmission, 'id' | 'createdAt' | 'status'>) => BookingSubmission;
   updateBookingStatus: (id: string, status: BookingSubmission['status']) => void;
   deleteBooking: (id: string) => void;
+
+  updateBrand: (updates: Partial<BrandInfo>) => void;
+  updateBrandHours: (updates: Partial<BrandInfo['hours']>) => void;
+  updateBrandSocial: (updates: Partial<BrandInfo['social']>) => void;
+
+  addPortfolioPiece: (piece: PortfolioPiece) => void;
+  updatePortfolioPiece: (id: string, updates: Partial<PortfolioPiece>) => void;
+  deletePortfolioPiece: (id: string) => void;
+  reorderPortfolioPiece: (id: string, direction: -1 | 1) => void;
+
+  addTestimonial: (t: Testimonial) => void;
+  updateTestimonial: (id: string, updates: Partial<Testimonial>) => void;
+  deleteTestimonial: (id: string) => void;
+
+  /** Replace every editable collection at once, from an exported backup. */
+  importAll: (payload: unknown) => { ok: true; applied: string[] } | { ok: false; error: string };
   resetToDefaults: () => void;
 }
 
@@ -34,6 +57,40 @@ const DEFAULT_PRICING_RULES: PricingRules = {
   cashmereKES: 28000,
   linenKES: 8000,
 };
+
+
+/**
+ * State that survives a reload, persisted to localStorage.
+ *
+ * Note this is per-browser: what the owner edits here is not what a visitor
+ * sees. Publishing means exporting a backup and rebuilding the site — see the
+ * admin Settings tab and the README.
+ */
+function usePersistentState<T>(key: string, fallback: T) {
+  const [value, setValue] = useState<T>(() => {
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed !== null && parsed !== undefined) return parsed as T;
+      }
+    } catch (e) {
+      console.warn(`Could not read ${key} from localStorage`, e);
+    }
+    return fallback;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      // Quota or private mode: edits still work for this session.
+      console.error(`Could not persist ${key}`, e);
+    }
+  }, [key, value]);
+
+  return [value, setValue] as const;
+}
 
 const TailoringContext = createContext<TailoringContextType | undefined>(undefined);
 
@@ -119,6 +176,11 @@ export const TailoringProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
     ];
   });
+
+  // 5. Brand, portfolio and testimonials — all editable from the admin panel.
+  const [brand, setBrand] = usePersistentState('nyota_brand_info', BRAND_INFO);
+  const [portfolio, setPortfolio] = usePersistentState('nyota_portfolio', CLIENT_PORTFOLIO);
+  const [testimonials, setTestimonials] = usePersistentState('nyota_testimonials', TESTIMONIALS);
 
   // 4. Pricing Rules State
   const [pricingRules, setPricingRules] = useState<PricingRules>(() => {
@@ -230,13 +292,102 @@ export const TailoringProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setBookings(prev => prev.filter(b => b.id !== id));
   };
 
+
+  // Publish contact details to non-React code (enquiry URL builders).
+  useEffect(() => {
+    setLiveBrand(brand);
+  }, [brand]);
+
+  // --- Brand & contact -------------------------------------------------
+  // Every enquiry routes to the WhatsApp number held here, so this is the most
+  // consequential thing in the panel: get it wrong and nothing reaches the
+  // atelier.
+  const updateBrand = (updates: Partial<BrandInfo>) =>
+    setBrand(prev => ({ ...prev, ...updates }));
+
+  const updateBrandHours = (updates: Partial<BrandInfo['hours']>) =>
+    setBrand(prev => ({ ...prev, hours: { ...prev.hours, ...updates } }));
+
+  const updateBrandSocial = (updates: Partial<BrandInfo['social']>) =>
+    setBrand(prev => ({ ...prev, social: { ...prev.social, ...updates } }));
+
+  // --- Portfolio --------------------------------------------------------
+  const addPortfolioPiece = (piece: PortfolioPiece) =>
+    setPortfolio(prev => [piece, ...prev]);
+
+  const updatePortfolioPiece = (id: string, updates: Partial<PortfolioPiece>) =>
+    setPortfolio(prev => prev.map(p => (p.id === id ? { ...p, ...updates } : p)));
+
+  const deletePortfolioPiece = (id: string) =>
+    setPortfolio(prev => prev.filter(p => p.id !== id));
+
+  /** Move a piece one slot earlier (-1) or later (+1); order is display order. */
+  const reorderPortfolioPiece = (id: string, direction: -1 | 1) =>
+    setPortfolio(prev => {
+      const i = prev.findIndex(p => p.id === id);
+      const j = i + direction;
+      if (i === -1 || j < 0 || j >= prev.length) return prev;
+      const next = [...prev];
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+
+  // --- Testimonials -----------------------------------------------------
+  const addTestimonial = (t: Testimonial) => setTestimonials(prev => [t, ...prev]);
+
+  const updateTestimonial = (id: string, updates: Partial<Testimonial>) =>
+    setTestimonials(prev => prev.map(t => (t.id === id ? { ...t, ...updates } : t)));
+
+  const deleteTestimonial = (id: string) =>
+    setTestimonials(prev => prev.filter(t => t.id !== id));
+
+  // --- Import -----------------------------------------------------------
+  /**
+   * Restore from an exported backup. Each collection is applied only if it is
+   * present and the right shape, so a partial or older export still works
+   * rather than wiping the fields it does not mention.
+   */
+  const importAll: TailoringContextType['importAll'] = (payload) => {
+    if (!payload || typeof payload !== 'object') {
+      return { ok: false, error: 'That file is not a valid backup.' };
+    }
+    const data = payload as Record<string, unknown>;
+    const applied: string[] = [];
+
+    if (Array.isArray(data.services) && data.services.length) {
+      setServices(data.services as ServiceItem[]); applied.push('garments');
+    }
+    if (Array.isArray(data.gallery)) { setGallery(data.gallery as GalleryItem[]); applied.push('gallery'); }
+    if (Array.isArray(data.portfolio)) { setPortfolio(data.portfolio as PortfolioPiece[]); applied.push('portfolio'); }
+    if (Array.isArray(data.testimonials)) { setTestimonials(data.testimonials as Testimonial[]); applied.push('testimonials'); }
+    if (Array.isArray(data.bookings)) { setBookings(data.bookings as BookingSubmission[]); applied.push('bookings'); }
+    if (data.pricingRules && typeof data.pricingRules === 'object') {
+      setPricingRules(prev => ({ ...prev, ...(data.pricingRules as Partial<PricingRules>) }));
+      applied.push('pricing rules');
+    }
+    if (data.brand && typeof data.brand === 'object') {
+      setBrand(prev => ({ ...prev, ...(data.brand as Partial<BrandInfo>) }));
+      applied.push('brand & contact');
+    }
+
+    return applied.length
+      ? { ok: true, applied }
+      : { ok: false, error: 'The file contained nothing recognisable.' };
+  };
+
   const resetToDefaults = () => {
     setServices(SERVICES_DATA);
     setGallery(GALLERY_ITEMS);
     setPricingRules(DEFAULT_PRICING_RULES);
+    setBrand(BRAND_INFO);
+    setPortfolio(CLIENT_PORTFOLIO);
+    setTestimonials(TESTIMONIALS);
     localStorage.removeItem('nyota_services_data');
     localStorage.removeItem('nyota_gallery_data');
     localStorage.removeItem('nyota_pricing_rules');
+    localStorage.removeItem('nyota_brand_info');
+    localStorage.removeItem('nyota_portfolio');
+    localStorage.removeItem('nyota_testimonials');
   };
 
   return (
@@ -246,6 +397,9 @@ export const TailoringProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         gallery,
         bookings,
         pricingRules,
+        brand,
+        portfolio,
+        testimonials,
         updateServicePrice,
         updateServiceImage,
         updateServiceDetails,
@@ -257,6 +411,17 @@ export const TailoringProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         addBooking,
         updateBookingStatus,
         deleteBooking,
+        updateBrand,
+        updateBrandHours,
+        updateBrandSocial,
+        addPortfolioPiece,
+        updatePortfolioPiece,
+        deletePortfolioPiece,
+        reorderPortfolioPiece,
+        addTestimonial,
+        updateTestimonial,
+        deleteTestimonial,
+        importAll,
         resetToDefaults,
       }}
     >

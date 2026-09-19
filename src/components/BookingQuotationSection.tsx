@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useTailoring } from '../context/TailoringContext';
-import { BRAND_INFO } from '../data/tailoringData';
 import { buildMailtoUrl, buildWhatsAppUrl, openWhatsApp } from '../utils/enquiry';
 import {
   Calendar,
@@ -25,7 +24,7 @@ export const BookingQuotationSection: React.FC<BookingQuotationProps> = ({
   currency,
   selectedFabricPreference 
 }) => {
-  const { services, pricingRules, addBooking } = useTailoring();
+  const { services, pricingRules, addBooking, brand } = useTailoring();
   const [activeTab, setActiveTab] = useState<'booking' | 'quotation'>('booking');
 
   // Form State

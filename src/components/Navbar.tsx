@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BRAND_INFO } from '../data/tailoringData';
+import { useTailoring } from '../context/TailoringContext';
 import { PageId } from '../types';
 import { BrandLogo } from './BrandLogo';
 import { 
@@ -26,6 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   currency, 
   onToggleCurrency 
 }) => {
+  const { brand } = useTailoring();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -84,14 +85,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="text-[12px] text-[#524C43]">({currency === 'KES' ? 'USD' : 'KES'})</span>
             </button>
             <a 
-              href={`tel:${BRAND_INFO.phone}`} 
+              href={`tel:${brand.phone}`} 
               className="flex items-center gap-1 text-[#524C43] hover:text-[#171412] transition-colors"
             >
               <Phone className="w-3 h-3 text-[#6E5410]" />
-              {BRAND_INFO.phone}
+              {brand.phone}
             </a>
             <a 
-              href={`https://wa.me/${BRAND_INFO.whatsapp}?text=${encodeURIComponent("Hello Nyota. Swerve. Closet, I'd like to inquire about bespoke tailoring.")}`}
+              href={`https://wa.me/${brand.whatsapp}?text=${encodeURIComponent("Hello Nyota. Swerve. Closet, I'd like to inquire about bespoke tailoring.")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#524C43] hover:text-[#171412] flex items-center gap-1 transition-colors"
@@ -217,7 +218,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               Book Appointment or Quotation
             </button>
             <a
-              href={`https://wa.me/${BRAND_INFO.whatsapp}?text=${encodeURIComponent("Hello Nyota. Swerve. Closet, I would like to consult with a master tailor.")}`}
+              href={`https://wa.me/${brand.whatsapp}?text=${encodeURIComponent("Hello Nyota. Swerve. Closet, I would like to consult with a master tailor.")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full py-3 rounded-sm border border-[#D6CBB8] hover:border-[#6E5410] text-[#2B2723] bg-[#EDE7DC] font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-colors"

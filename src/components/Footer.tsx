@@ -1,5 +1,5 @@
 import React from 'react';
-import { BRAND_INFO } from '../data/tailoringData';
+import { useTailoring } from '../context/TailoringContext';
 import { PageId } from '../types';
 import { BrandLogo } from './BrandLogo';
 import { 
@@ -15,6 +15,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
+  const { brand } = useTailoring();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -53,7 +54,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </span>
               <div className="flex flex-col gap-1.5 text-[12px] text-[#6E5410]">
                 <a 
-                  href={BRAND_INFO.social.instagram} 
+                  href={brand.social.instagram} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="hover:text-[#6E5410] transition-colors flex items-center gap-1.5 min-h-[44px]"
@@ -62,7 +63,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   <span>Nyota. Swerve. Closet</span>
                 </a>
                 <a 
-                  href={BRAND_INFO.social.facebook} 
+                  href={brand.social.facebook} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="hover:text-[#6E5410] transition-colors flex items-center gap-1.5 min-h-[44px]"
@@ -71,7 +72,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   <span>Nyota. Swerve. Closet</span>
                 </a>
                 <a 
-                  href={BRAND_INFO.social.tiktok} 
+                  href={brand.social.tiktok} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="hover:text-[#6E5410] transition-colors flex items-center gap-1.5 min-h-[44px]"
@@ -130,7 +131,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <div className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#6E5410] shrink-0 mt-0.5" />
                 <a
-                  href={BRAND_INFO.mapsUrl}
+                  href={brand.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-[#171412] transition-colors"
@@ -140,14 +141,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#6E5410] shrink-0" />
-                <a href={`tel:${BRAND_INFO.phone}`} className="hover:text-[#171412] text-[#2B2723] font-medium transition-colors inline-flex items-center min-h-[44px]">
-                  {BRAND_INFO.phone}
+                <a href={`tel:${brand.phone}`} className="hover:text-[#171412] text-[#2B2723] font-medium transition-colors inline-flex items-center min-h-[44px]">
+                  {brand.phone}
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#6E5410] shrink-0" />
-                <a href={`mailto:${BRAND_INFO.email}`} className="hover:text-[#171412] text-[#2B2723] transition-colors inline-flex items-center min-h-[44px] break-all">
-                  {BRAND_INFO.email}
+                <a href={`mailto:${brand.email}`} className="hover:text-[#171412] text-[#2B2723] transition-colors inline-flex items-center min-h-[44px] break-all">
+                  {brand.email}
                 </a>
               </div>
               <div className="flex items-center gap-2">

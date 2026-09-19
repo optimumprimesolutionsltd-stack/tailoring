@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { FABRIC_SWATCHES, FABRIC_CATEGORIES } from '../data/fabricSwatches';
 import { FabricSwatch, FabricColorway, FabricCategory } from '../types';
-import { BRAND_INFO } from '../data/tailoringData';
+import { useTailoring } from '../context/TailoringContext';
 import { buildMailtoUrl, buildWhatsAppUrl, compose, openWhatsApp } from '../utils/enquiry';
 import { 
   Layers, 
@@ -32,6 +32,7 @@ type SilhouetteType = 'suit' | 'safari' | 'tuxedo' | 'trousers';
 type LightingMode = 'daylight' | 'evening' | 'studio';
 
 export const FabricSwatchLibrary: React.FC<FabricSwatchLibraryProps> = ({ onSelectForBooking }) => {
+  const { brand } = useTailoring();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   
@@ -117,7 +118,7 @@ export const FabricSwatchLibrary: React.FC<FabricSwatchLibraryProps> = ({ onSele
 • Recommended Cut: ${activeFabric.recommendedGarments[0]}
 
 Could you advise on cloth availability for an atelier fitting in Ruiru?`;
-    return `https://wa.me/${BRAND_INFO.whatsapp}?text=${encodeURIComponent(message)}`;
+    return `https://wa.me/${brand.whatsapp}?text=${encodeURIComponent(message)}`;
   };
 
   const sampleRequestText = () =>

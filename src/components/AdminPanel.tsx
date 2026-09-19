@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useTailoring } from '../context/TailoringContext';
 import { PageId, ServiceItem, GalleryItem, BookingSubmission } from '../types';
 import { attemptsRemaining, isAdminConfigured, verifyPasscode } from '../utils/adminAuth';
+import { BrandSettingsTab } from './admin/BrandSettingsTab';
+import { PortfolioTab } from './admin/PortfolioTab';
 import { 
   DollarSign, 
   Image as ImageIcon, 
@@ -46,6 +48,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
     updateBookingStatus,
     deleteBooking,
     resetToDefaults,
+    brand,
+    portfolio,
+    testimonials,
+    importAll,
   } = useTailoring();
 
   // Authentication State
@@ -56,8 +62,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
   const [authError, setAuthError] = useState('');
   const [checkingPasscode, setCheckingPasscode] = useState(false);
 
-  // Active Tab: 'prices' | 'photos' | 'catalog' | 'bookings' | 'settings'
-  const [activeTab, setActiveTab] = useState<'prices' | 'photos' | 'catalog' | 'bookings' | 'settings'>('prices');
+  // Active Tab — brand first: contact details are the most consequential thing here.
+  const [activeTab, setActiveTab] = useState<'brand' | 'prices' | 'photos' | 'catalog' | 'portfolio' | 'bookings' | 'settings'>('brand');
 
   // Notification Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -264,11 +270,38 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
   };
 
   // Export Data JSON
+
+  // Restore from an exported backup.
+  const handleImportData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(reader.result as string);
+      } catch {
+        showToast('That file is not valid JSON.');
+        return;
+      }
+      const result = importAll(parsed);
+      showToast(result.ok ? `Restored: ${result.applied.join(', ')}.` : result.error);
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   const handleExportData = () => {
+    // Everything editable, so a backup can fully restore this browser — and so
+    // the export can be used to publish changes to the live site.
     const data = {
       exportedAt: new Date().toISOString(),
+      version: 2,
+      brand,
       services,
       gallery,
+      portfolio,
+      testimonials,
       bookings,
       pricingRules,
     };
@@ -438,6 +471,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
         {/* Console Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-4 border-b border-[#D6CBB8] scrollbar-none">
           <button
+            onClick={() => setActiveTab('brand')}
+            className={`px-4 py-2.5 rounded-sm text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+              activeTab === 'brand'
+                ? 'bg-[#171412] text-[#FBF8F3] shadow-md'
+                : 'bg-[#E4DCCE] text-[#524C43] hover:text-[#171412] border border-[#D6CBB8]'
+            }`}
+          >
+            <Phone className="w-3.5 h-3.5" />
+            <span>Brand &amp; Contact</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('prices')}
             className={`px-4 py-2.5 rounded-sm text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
               activeTab === 'prices'
@@ -474,6 +519,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
           </button>
 
           <button
+            onClick={() => setActiveTab('portfolio')}
+            className={`px-4 py-2.5 rounded-sm text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
+              activeTab === 'portfolio'
+                ? 'bg-[#171412] text-[#FBF8F3] shadow-md'
+                : 'bg-[#E4DCCE] text-[#524C43] hover:text-[#171412] border border-[#D6CBB8]'
+            }`}
+          >
+            <ImageIcon className="w-3.5 h-3.5" />
+            <span>Portfolio</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('bookings')}
             className={`px-4 py-2.5 rounded-sm text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer ${
               activeTab === 'bookings'
@@ -499,6 +556,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
         </div>
 
         {/* TAB 1: EDIT PRICES */}
+        {activeTab === 'brand' && <BrandSettingsTab />}
+
+        {activeTab === 'portfolio' && <PortfolioTab />}
+
         {activeTab === 'prices' && (
           <div className="py-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#E4DCCE] p-5 rounded-sm border border-[#D6CBB8]">
@@ -580,7 +641,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
                       <button
                         type="button"
                         onClick={() => handleAutoConvertUSD(srv.id)}
-                        className="self-end mb-1 px-2.5 py-1.5 bg-[#1C1C24] hover:bg-[#262632] border border-[#BCAE97] rounded text-[12px] text-[#6E5410] transition-colors cursor-pointer"
+                        className="self-end mb-1 px-2.5 py-1.5 bg-[#1C1C24] hover:bg-[#D6CBB8] border border-[#BCAE97] rounded text-[12px] text-[#6E5410] transition-colors cursor-pointer"
                         title="Auto-calculate USD based on current KES"
                       >
                         Auto USD
@@ -735,7 +796,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
                     <span className="text-[12px] text-[#6B6459] mb-3">
                       PNG, JPG, WEBP from your laptop or phone
                     </span>
-                    <label className="px-4 py-2 bg-[#E4DCCE] hover:bg-[#262632] border border-[#BCAE97] text-xs text-[#171412] font-medium rounded-sm transition-colors cursor-pointer">
+                    <label className="px-4 py-2 bg-[#E4DCCE] hover:bg-[#D6CBB8] border border-[#BCAE97] text-xs text-[#171412] font-medium rounded-sm transition-colors cursor-pointer">
                       <span>Choose Local File</span>
                       <input
                         type="file"
@@ -831,7 +892,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
                           window.scrollTo({ top: 200, behavior: 'smooth' });
                           showToast(`Ready to change photo for "${srv.title}"`);
                         }}
-                        className="mt-3 w-full py-1.5 bg-[#E4DCCE] hover:bg-[#262632] border border-[#BCAE97] text-[12px] uppercase font-semibold text-[#171412] rounded transition-colors cursor-pointer"
+                        className="mt-3 w-full py-1.5 bg-[#E4DCCE] hover:bg-[#D6CBB8] border border-[#BCAE97] text-[12px] uppercase font-semibold text-[#171412] rounded transition-colors cursor-pointer"
                       >
                         Change Photo
                       </button>
@@ -1300,11 +1361,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onNavigate }) => {
               <div className="flex flex-wrap gap-4 pt-2">
                 <button
                   onClick={handleExportData}
-                  className="px-4 py-2.5 bg-[#E4DCCE] hover:bg-[#262632] border border-[#BCAE97] text-xs text-[#171412] rounded-sm flex items-center gap-2 transition-colors cursor-pointer"
+                  className="px-4 py-2.5 bg-[#E4DCCE] hover:bg-[#D6CBB8] border border-[#BCAE97] text-xs text-[#171412] rounded-sm flex items-center gap-2 transition-colors cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download Catalog Backup (JSON)</span>
+                  <span>Download Full Backup (JSON)</span>
                 </button>
+
+                <label className="px-4 py-2.5 bg-[#E4DCCE] hover:bg-[#D6CBB8] border border-[#BCAE97] text-xs text-[#171412] rounded-sm flex items-center gap-2 transition-colors cursor-pointer">
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Restore From Backup</span>
+                  <input type="file" accept="application/json,.json" onChange={handleImportData} className="hidden" />
+                </label>
 
                 <button
                   onClick={() => {

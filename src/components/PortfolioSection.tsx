@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { CLIENT_PORTFOLIO } from '../data/tailoringData';
+import { useTailoring } from '../context/TailoringContext';
 import { PortfolioPiece } from '../types';
 import { X, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { responsiveImage } from '../utils/images';
@@ -25,12 +25,13 @@ const FILTERS: { id: 'all' | PortfolioPiece['category']; label: string }[] = [
  * thumbnail cannot carry.
  */
 export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onOpenBooking }) => {
+  const { portfolio } = useTailoring();
   const [filter, setFilter] = useState<'all' | PortfolioPiece['category']>('all');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const pieces = useMemo(
-    () => (filter === 'all' ? CLIENT_PORTFOLIO : CLIENT_PORTFOLIO.filter(p => p.category === filter)),
-    [filter],
+    () => (filter === 'all' ? portfolio : portfolio.filter(p => p.category === filter)),
+    [filter, portfolio],
   );
 
   const active = lightboxIndex === null ? null : pieces[lightboxIndex] ?? null;

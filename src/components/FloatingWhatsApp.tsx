@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { BRAND_INFO } from '../data/tailoringData';
+import { useTailoring } from '../context/TailoringContext';
 import { MessageCircle, X, Send } from 'lucide-react';
 
 export const FloatingWhatsApp: React.FC = () => {
+  const { brand } = useTailoring();
   const [isOpen, setIsOpen] = useState(false);
 
   const quickMessages = [
@@ -15,7 +16,7 @@ export const FloatingWhatsApp: React.FC = () => {
   const handleOpenWhatsApp = (text?: string) => {
     const defaultMsg = "Hello Nyota. Swerve. Closet, I would like to consult with a master tailor.";
     const message = text || defaultMsg;
-    const url = `https://wa.me/${BRAND_INFO.whatsapp}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/${brand.whatsapp}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
     setIsOpen(false);
   };
