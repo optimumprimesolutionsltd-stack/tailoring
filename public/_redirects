@@ -1,0 +1,4 @@
+# SPA fallback: every path must serve index.html so client-side routes resolve
+# on a hard refresh or a direct link. Without this, /offerings returns a 404 on
+# a static host. Cloudflare Pages and Netlify both read this file.
+/*  /index.html  200

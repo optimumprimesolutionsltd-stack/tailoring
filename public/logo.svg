@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 380" fill="currentColor">
+  <!-- Tuxedo Jacket Lapels & Collar -->
+  <g id="tuxedo-motif">
+    <!-- Left Lapel -->
+    <path d="M 276 110 
+             C 270 125, 260 142, 246 150 
+             L 264 156 
+             C 255 180, 275 240, 298 272 
+             L 292 272 
+             C 270 238, 245 175, 252 153 
+             L 238 147 
+             C 250 135, 262 118, 272 108 
+             Z" />
+    
+    <!-- Right Lapel (Mirrored) -->
+    <path d="M 324 110 
+             C 330 125, 340 142, 354 150 
+             L 336 156 
+             C 345 180, 325 240, 302 272 
+             L 308 272 
+             C 330 238, 355 175, 348 153 
+             L 362 147 
+             C 350 135, 338 118, 328 108 
+             Z" />
+             
+    <!-- Bow Tie Center Knot -->
+    <rect x="294" y="128" width="12" height="18" rx="3" />
+    
+    <!-- Bow Tie Left Wing -->
+    <path d="M 294 133 
+             C 285 125, 270 124, 268 137 
+             C 270 150, 285 149, 294 141 
+             Z" />
+             
+    <!-- Bow Tie Right Wing -->
+    <path d="M 306 133 
+             C 315 125, 330 124, 332 137 
+             C 330 150, 315 149, 306 141 
+             Z" />
+
+    <!-- Left Button -->
+    <circle cx="248" cy="260" r="7.5" />
+    <circle cx="248" cy="260" r="4" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
+    <circle cx="246" cy="258" r="1.5" fill="#FFFFFF" opacity="0.8" />
+
+    <!-- Right Button -->
+    <circle cx="352" cy="260" r="7.5" />
+    <circle cx="352" cy="260" r="4" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4" />
+    <circle cx="350" cy="258" r="1.5" fill="#FFFFFF" opacity="0.8" />
+
+    <!-- Left Wing Tapered Rule -->
+    <path d="M 120 260 L 235 258.5 L 235 261.5 Z" />
+
+    <!-- Right Wing Tapered Rule -->
+    <path d="M 480 260 L 365 258.5 L 365 261.5 Z" />
+  </g>
+
+  <!-- Typography: NYOTA -->
+  <text 
+    x="300" 
+    y="330" 
+    text-anchor="middle" 
+    font-family="'Cinzel', Georgia, serif" 
+    font-size="52" 
+    font-weight="700" 
+    letter-spacing="12"
+  >NYOTA</text>
+
+  <!-- Subtitle: SWERVE CLOSET with Tapered Accents -->
+  <g id="subtitle-group">
+    <!-- Left Accent Line -->
+    <path d="M 120 360 L 205 359 L 205 361 Z" />
+    
+    <!-- Subtitle Text -->
+    <text 
+      x="300" 
+      y="364" 
+      text-anchor="middle" 
+      font-family="'Plus Jakarta Sans', sans-serif" 
+      font-size="14" 
+      font-weight="500" 
+      letter-spacing="7"
+    >SWERVE CLOSET</text>
+    
+    <!-- Right Accent Line -->
+    <path d="M 480 360 L 395 359 L 395 361 Z" />
+  </g>
+</svg>

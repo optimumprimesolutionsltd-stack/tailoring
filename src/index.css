@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #2B2723;
+    background-color: #EDE7DC;
+  }
+
+  /* Headings: Cormorant Garamond has true lowercase, so sentence case renders
+     as written. Cinzel — the previous heading face — is an inscriptional
+     capitals design with no real lowercase, which forced every heading into
+     all-caps regardless of the source text. */
+  h1, h2, h3, .font-display {
+    font-family: 'Cormorant Garamond', Garamond, Georgia, serif;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    line-height: 1.12;
+  }
+
+  /* The wordmark is the one place capitals are correct. */
+  .font-wordmark {
+    font-family: 'Cinzel', Georgia, serif;
+    letter-spacing: 0.18em;
+  }
+
+  /* Pull quotes and testimonials only — not body copy. Cormorant is a
+     high-contrast display serif and goes weak at small sizes. */
+  .font-editorial {
+    font-family: 'Cormorant Garamond', Garamond, serif;
+    font-weight: 400;
+  }
+}
+
+/* Aligned digits for prices, references and counters.
+   Plus Jakarta Sans carries real tabular figures, so numbers line up in a
+   column without pulling in a monospace family. Proportional digits in this
+   face range from 15px to 29px at 40px size — which is why price breakdowns
+   looked ragged when they relied on the browser's default mono fallback. */
+code, kbd, samp, pre {
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+}
+
+.tabular-figures {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Accent: warm antique gold, drawn from the gold ties and suits in the
+   atelier's own client photography. Gold carries highlights; body copy stays
+   neutral so the accent keeps its meaning. Olive is the supporting tone. */
+.text-highlight-gradient,
+.text-gold-gradient,
+.text-platinum-gradient,
+.text-blue-gradient {
+  background: linear-gradient(135deg, #A8831F 0%, #8A6A16 45%, #7A5D12 75%, #5E470C 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-highlight-glow {
+  box-shadow: 0 0 25px rgba(122, 93, 18, 0.16);
+}
+
+.bg-highlight-glow-lg {
+  box-shadow: 0 0 45px rgba(122, 93, 18, 0.24);
+}
+
+.fabric-grid-pattern {
+  background-image: radial-gradient(rgba(20, 18, 15, 0.07) 1px, transparent 0);
+  background-size: 28px 28px;
+}

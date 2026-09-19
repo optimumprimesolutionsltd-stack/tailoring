@@ -1,0 +1,8 @@
+# Nyota. Swerve. Closet
+User-agent: *
+Allow: /
+
+# The staff portal holds no public content and should not be indexed.
+Disallow: /admin
+
+Sitemap: https://nyotaswerve.ke/sitemap.xml
