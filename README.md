@@ -186,18 +186,28 @@ before swapping in landscape images.
 
 ## Known gaps
 
-- **Testimonials are fictional and currently hidden.** The entries in
-  `TESTIMONIALS` (`src/data/tailoringData.ts`) are invented sample content that the
-  UI renders with "Verified Bespoke Client" badges, so `<PortfolioSection />` was
-  put in their place on the home and Craft & Process pages. Replace the array with
-  real, consented reviews before re-enabling the section in `App.tsx`.
-- **Some stock imagery remains**: tuxedos, waistcoats, overcoats and the
-  accessories still use Unsplash placeholders, along with the fabric swatches in
-  `src/data/fabricSwatches.ts`. Replace them as real photographs become available.
-- **`nyotaswerve.ke`** is asserted in the schema.org block in `index.html` but
-  is not wired up. Update it when the real domain is live.
-- **Images are unoptimised.** `public/clients/` is ~2.3 MB of JPEG at full size.
-  Fine for launch; convert to WebP/AVIF with responsive `srcset` if load time on
-  Kenyan mobile data becomes a concern.
-- **Single ~660 kB JS bundle**, no code-splitting. Worth splitting per route if
-  load time matters.
+Ordered by what would most change the business, not by effort.
+
+- **Not deployed.** Everything is built and pushed, but no live URL exists yet.
+- **Admin edits do not reach visitors.** The panel writes to `localStorage`, so
+  what the owner changes is visible only in their browser. Publishing means
+  exporting a backup and rebuilding. Wiring the export into the build would make
+  this a genuine one-step publish; instant live editing would need a backend,
+  and would also mean the admin gate must become real authentication rather than
+  obfuscation.
+- **Testimonials are fictional and hidden.** `TESTIMONIALS` is invented sample
+  content rendered with "Verified Bespoke Client" badges. `<PortfolioSection />`
+  stands in its place. Replace with real, consented reviews before re-enabling
+  it in `App.tsx`.
+- **No analytics.** Nothing records which garments people look at or where
+  enquiries come from, so there is no way to tell what is working.
+- **`nyotaswerve.ke` is assumed, not confirmed.** Hard-coded in `index.html`,
+  `src/routes.ts`, `public/robots.txt` and the sitemap generator.
+- **Stock imagery remains** for tuxedos, waistcoats, overcoats, accessories and
+  every fabric swatch in `src/data/fabricSwatches.ts`. Replace as real
+  photographs become available.
+- **Single ~666 kB JS bundle**, no code-splitting. `motion` and `lucide-react`
+  dominate it. Worth splitting per route if load time matters on mobile data.
+- **The FAQ still promises Nairobi concierge times** written for the old
+  Westlands base — "within 30–45 mins" to Karen and Runda is unlikely from
+  Ruiru. Review before customers hold you to it.

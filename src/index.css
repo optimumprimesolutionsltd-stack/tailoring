@@ -7,6 +7,23 @@
     background-color: #EDE7DC;
   }
 
+  /* Visible keyboard focus.
+     Tailwind's preflight removes the browser's default outline, and nothing
+     replaced it — 36 of 40 controls were focusable with no visible indicator,
+     which fails WCAG 2.4.7 and makes the site unusable by keyboard.
+     :focus-visible keeps it to keyboard users, so mouse clicks stay clean. */
+  :focus-visible {
+    outline: 2px solid #6E5410;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* On dark surfaces the gold outline has too little contrast; go light. */
+  .bg-\[\#171412\]:focus-visible,
+  .bg-\[\#D4AF37\]:focus-visible {
+    outline-color: #FBF8F3;
+  }
+
   /* Headings: Cormorant Garamond has true lowercase, so sentence case renders
      as written. Cinzel — the previous heading face — is an inscriptional
      capitals design with no real lowercase, which forced every heading into
