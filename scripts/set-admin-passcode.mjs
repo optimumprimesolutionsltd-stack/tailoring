@@ -19,6 +19,11 @@ const ENV_FILE = '.env.local';
 const KEY = 'VITE_ADMIN_PASSCODE_HASH';
 const MIN_LENGTH = 8;
 
+// A short passcode is allowed only when asked for explicitly:
+//   npm run set-passcode -- --allow-short
+// The guard stays on by default so nobody sets a weak one by accident.
+const ALLOW_SHORT = process.argv.includes('--allow-short');
+
 // One interface for the whole session: opening a second one closes stdin and
 // the follow-up prompt then resolves empty.
 const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -79,8 +84,19 @@ const fail = (message) => {
 
 const passcode = await ask('New admin passcode: ');
 if (passcode === null) fail('No passcode entered. Nothing was changed.');
+if (passcode.length < MIN_LENGTH && !ALLOW_SHORT) {
+  fail(
+    `Too short — use at least ${MIN_LENGTH} characters, ` +
+    `or pass --allow-short if this is deliberately temporary. Nothing was changed.`,
+  );
+}
+
 if (passcode.length < MIN_LENGTH) {
-  fail(`Too short — use at least ${MIN_LENGTH} characters. Nothing was changed.`);
+  console.warn(
+    `
+Warning: ${passcode.length}-character passcode. Treat this as temporary ` +
+    `and replace it before the site gets real traffic.`,
+  );
 }
 
 const confirmation = await ask('Confirm passcode: ');

@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nyota-swerve-closet",
+  "compatibility_date": "2026-09-01",
+
+  // Static site: the build output is served directly, no server code.
+  "assets": {
+    "directory": "./dist",
+    // Routes are real paths (/offerings, /booking), so unknown paths must fall
+    // back to index.html or a hard refresh on a deep link returns 404.
+    // This is the Workers equivalent of public/_redirects on Pages.
+    "not_found_handling": "single-page-application"
+  }
+}
