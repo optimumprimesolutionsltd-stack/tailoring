@@ -10,7 +10,6 @@ import {
   Calendar, 
   ArrowUpRight, 
   MessageCircle,
-  Sliders
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -47,7 +46,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'booking', label: 'Book & Quote' },
     { id: 'faq', label: 'FAQ' },
     { id: 'contact', label: 'Atelier' },
-    { id: 'admin', label: 'Admin Portal' },
   ];
 
   const handleLinkClick = (pageId: PageId) => {
@@ -117,23 +115,19 @@ export const Navbar: React.FC<NavbarProps> = ({
         <nav className="hidden xl:flex items-center gap-5 lg:gap-6 text-xs lg:text-sm font-medium tracking-wide">
           {navItems.map((item) => {
             const isActive = currentPage === item.id;
-            const isAdmin = item.id === 'admin';
 
             return (
               <button
                 key={item.id}
                 onClick={() => handleLinkClick(item.id)}
                 className={`transition-all relative py-1 cursor-pointer whitespace-nowrap flex items-center gap-1 ${
-                  isActive 
-                    ? 'text-[#171412] font-semibold' 
-                    : isAdmin 
-                      ? 'text-[#6E5410] hover:text-[#171412] px-2 py-0.5 rounded border border-[#D6CBB8] hover:border-[#6E5410] bg-[#E4DCCE]'
-                      : 'text-[#524C43] hover:text-[#171412]'
+                  isActive
+                    ? 'text-[#171412] font-semibold'
+                    : 'text-[#524C43] hover:text-[#171412]'
                 }`}
               >
-                {isAdmin && <Sliders className="w-3 h-3 text-[#524C43]" />}
                 <span>{item.label}</span>
-                {isActive && !isAdmin && (
+                {isActive && (
                   <span className="absolute -bottom-1 left-0 right-0 h-[2px] bg-[#FBF8F3] shadow-[0_4px_16px_rgba(20,18,15,0.10)]" />
                 )}
               </button>
@@ -190,7 +184,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="grid grid-cols-2 gap-2 text-sm font-medium">
             {navItems.map((item) => {
               const isActive = currentPage === item.id;
-              const isAdmin = item.id === 'admin';
 
               return (
                 <button
@@ -203,7 +196,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   }`}
                 >
                   <span>{item.label}</span>
-                  {isAdmin && <Sliders className="w-3 h-3 text-[#524C43]" />}
                 </button>
               );
             })}
